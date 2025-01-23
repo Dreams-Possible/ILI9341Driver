@@ -4,8 +4,8 @@
 
 //config
 #define DC 21
-#define RST 47
-#define LED 14
+#define RST 47//no use as -1
+#define LED 14//no use as -1
 #define HOR 160//horizontal pixel
 #define HOR_OFF 0//horizontal pixel offset
 #define VER 160//vertical pixel
@@ -17,8 +17,8 @@
 //example config for specific oem landscape screen
 // //config
 // #define DC 21
-// #define RST 47
-// #define LED 14
+// #define RST 47//no use as -1
+// #define LED 14//no use as -1
 // #define HOR 160//horizontal pixel
 // #define HOR_OFF 0//horizontal pixel offset
 // #define VER 160//vertical pixel
@@ -30,8 +30,8 @@
 //example config for specific oem vertical screen
 // //config
 // #define DC 21
-// #define RST 47
-// #define LED 14
+// #define RST 47//no use as -1
+// #define LED 14//no use as -1
 // #define HOR 160//horizontal pixel
 // #define HOR_OFF 0//horizontal pixel offset
 // #define VER 160//vertical pixel
@@ -154,8 +154,8 @@ static void init_soft()
         io(RST,1);
         io(RST,0);
         io(RST,1);
+        delay(200);
     }
-    delay(200);
     //send init code
     send_cmd(SWRESET);
     delay(200);
