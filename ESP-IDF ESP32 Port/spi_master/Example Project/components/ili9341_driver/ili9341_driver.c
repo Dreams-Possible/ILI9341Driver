@@ -13,6 +13,9 @@
 #define DIR 0//rotation direction
 #define BRG 1//use bgr:0rgb,1bgr
 #define INV 0//use inv:0disable,1enable
+#define SPI SPI2_HOST
+#define RATE 40*1000*1000
+#define CS 10
 
 //example config for specific oem landscape screen
 // //config
@@ -48,6 +51,15 @@
 #define COLMOD 0x3a
 #define MADCTL 0x36
 #define DISPON 0x29
+#define GMCTRP1 0xe0
+#define GMCTRN1 0xe1
+
+//static data
+typedef struct static_data_t
+{
+    spi_device_handle_t device;
+}static_data_t;
+static static_data_t static_data={0};
 
 //io set
 static void io(uint16_t pin,uint8_t level);
@@ -73,12 +85,14 @@ void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
 //io set
 static void io(uint16_t pin,uint8_t level)
 {
+    gpio_set_level(pin,level);
     return;
 }
 
 //delay ms
 static void delay(uint32_t ms)
 {
+    vTaskDelay(pdMS_TO_TICKS(ms));
     return;
 }
 
@@ -86,7 +100,10 @@ static void delay(uint32_t ms)
 static void send_cmd(uint8_t cmd)
 {
     io(DC,0);
-    //spi_send(cmd);
+    spi_transaction_t trans={0};
+    trans.length=8,
+    trans.tx_buffer=&cmd,
+    spi_device_transmit(static_data.device,&trans);
     return;
 }
 
@@ -94,7 +111,10 @@ static void send_cmd(uint8_t cmd)
 static void send_data(uint8_t data)
 {
     io(DC,1);
-    //spi_send(data);
+    spi_transaction_t trans={0};
+    trans.length=8,
+    trans.tx_buffer=&data,
+    spi_device_transmit(static_data.device,&trans);
     return;
 }
 
@@ -106,38 +126,62 @@ static void send_color(uint16_t*data,uint32_t length)
     {
         return;
     }
-    while(length)
+    uint16_t color=0;
+    spi_transaction_t transaction={0};
+    transaction.length=16;
+    while (length)
     {
-        //spi_send((uint8_t)(*data>>8));
-        //spi_send((uint8_t)*data);
+        color=SPI_SWAP_DATA_TX(*data,16);
+        transaction.tx_buffer=&color;
+        spi_device_transmit(static_data.device,&transaction);
         ++data;
         --length;
     }
-    return;
 }
 
 //init gpio
 static void init_gpio()
 {
+    //gpio init
+    gpio_config_t config={0};
     //dc pin
-    //dc_init();
-    if(RST!=-1)
-    {
+    config.intr_type=GPIO_INTR_DISABLE;
+    config.mode=GPIO_MODE_OUTPUT;
+    config.pin_bit_mask=(1ULL<<DC);
+    config.pull_down_en=0;
+    config.pull_up_en=0;
+    gpio_config(&config);
+    #if RST!=-1
         //rst pin
-        //rst_init();
-    }
-    if(LED!=-1)
-    {
+        config.intr_type=GPIO_INTR_DISABLE,
+        config.mode=GPIO_MODE_OUTPUT,
+        config.pin_bit_mask=(1ULL<<RST),
+        config.pull_down_en=0,
+        config.pull_up_en=0,
+        gpio_config(&config);
+    #endif//#if RST!=-1
+    #if LED!=-1
         //led pin
-        //led_init();
-    }
+        config.intr_type=GPIO_INTR_DISABLE;
+        config.mode=GPIO_MODE_OUTPUT;
+        config.pin_bit_mask=(1ULL<<LED);
+        config.pull_down_en=0;
+        config.pull_up_en=0;
+        gpio_config(&config);
+    #endif//#if LED!=-1
     return;
 }
 
 //init spi
 static void init_spi()
 {
-    //spi_init();
+    //add spi device
+    spi_device_interface_config_t config={0};
+    config.mode=0;
+    config.spics_io_num=CS;
+    config.queue_size=1;
+    config.clock_speed_hz=RATE;
+    spi_bus_add_device(SPI,&config,&static_data.device);
 }
 
 //init software
@@ -194,6 +238,38 @@ static void init_soft()
             send_data(0x80|bgr);
         break;
     }
+    send_cmd(GMCTRP1);
+    send_data(0x0F);
+    send_data(0x31);
+    send_data(0x2B);
+    send_data(0x0C);
+    send_data(0x0E);
+    send_data(0x08);
+    send_data(0x4E);
+    send_data(0xF1);
+    send_data(0x37);
+    send_data(0x07);
+    send_data(0x10);
+    send_data(0x03);
+    send_data(0x0E);
+    send_data(0x09);
+    send_data(0x00);
+    send_cmd(GMCTRN1);
+    send_data(0x00);
+    send_data(0x0E);
+    send_data(0x14);
+    send_data(0x03);
+    send_data(0x11);
+    send_data(0x07);
+    send_data(0x31);
+    send_data(0xC1);
+    send_data(0x48);
+    send_data(0x08);
+    send_data(0x0F);
+    send_data(0x0C);
+    send_data(0x31);
+    send_data(0x36);
+    send_data(0x0F);
     send_cmd(DISPON);
     delay(200);
     //enable backlight
