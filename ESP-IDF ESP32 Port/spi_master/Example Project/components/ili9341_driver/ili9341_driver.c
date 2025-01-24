@@ -126,16 +126,28 @@ static void send_color(uint16_t*data,uint32_t length)
     {
         return;
     }
-    uint16_t color=0;
-    spi_transaction_t transaction={0};
-    transaction.length=16;
-    while (length)
+    for(uint32_t f=0;f<length;++f)
     {
-        color=SPI_SWAP_DATA_TX(*data,16);
-        transaction.tx_buffer=&color;
-        spi_device_transmit(static_data.device,&transaction);
-        ++data;
-        --length;
+        data[f]=SPI_SWAP_DATA_TX(data[f],16);
+    }
+    spi_transaction_t transaction={0};
+    while (length>0)
+    {
+        if(length>=256)
+        {
+            transaction.length=4096;
+            transaction.tx_buffer=data;
+            spi_device_transmit(static_data.device,&transaction);
+            data+=256;
+            length-=256;
+        }
+        else
+        {
+            transaction.length=length*16;
+            transaction.tx_buffer=data;
+            spi_device_transmit(static_data.device,&transaction);
+            length=0;
+        }
     }
 }
 

@@ -48,6 +48,8 @@
 #define COLMOD 0x3a
 #define MADCTL 0x36
 #define DISPON 0x29
+#define GMCTRP1 0xe0
+#define GMCTRN1 0xe1
 
 //io set
 static void io(uint16_t pin,uint8_t level);
@@ -194,6 +196,38 @@ static void init_soft()
             send_data(0x80|bgr);
         break;
     }
+    send_cmd(GMCTRP1);
+    send_data(0x0F);
+    send_data(0x31);
+    send_data(0x2B);
+    send_data(0x0C);
+    send_data(0x0E);
+    send_data(0x08);
+    send_data(0x4E);
+    send_data(0xF1);
+    send_data(0x37);
+    send_data(0x07);
+    send_data(0x10);
+    send_data(0x03);
+    send_data(0x0E);
+    send_data(0x09);
+    send_data(0x00);
+    send_cmd(GMCTRN1);
+    send_data(0x00);
+    send_data(0x0E);
+    send_data(0x14);
+    send_data(0x03);
+    send_data(0x11);
+    send_data(0x07);
+    send_data(0x31);
+    send_data(0xC1);
+    send_data(0x48);
+    send_data(0x08);
+    send_data(0x0F);
+    send_data(0x0C);
+    send_data(0x31);
+    send_data(0x36);
+    send_data(0x0F);
     send_cmd(DISPON);
     delay(200);
     //enable backlight
