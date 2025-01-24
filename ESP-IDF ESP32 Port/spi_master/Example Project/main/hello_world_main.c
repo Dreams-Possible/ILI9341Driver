@@ -10,7 +10,7 @@ void app_main(void)
     //spi init
     spi_init();
 
-    //st7735 init all
+    //ili9341 init all
     ili9341_init();
 
     //simple test
@@ -22,6 +22,6 @@ void app_main(void)
         ++color;
     }
 
-    //st7735 flash color
+    //ili9341 flash color
     ili9341_flash(0,0,240-1,320-1,data);
 }
