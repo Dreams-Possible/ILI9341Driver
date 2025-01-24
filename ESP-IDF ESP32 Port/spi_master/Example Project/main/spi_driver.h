@@ -3,7 +3,7 @@
 #ifndef SPI_DRIVER_H
 #define SPI_DRIVER_H
 
-//local include
+//include
 #include "driver/spi_master.h"
 
 //spi init
