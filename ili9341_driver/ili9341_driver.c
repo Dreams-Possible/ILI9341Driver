@@ -67,9 +67,9 @@ static void init_gpio();
 static void init_spi();
 //init software
 static void init_soft();
-//ili9341 init all
+//ili9341 init
 void ili9341_init();
-//ili9341 flash color
+//ili9341 flash
 void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
 
 //io set
@@ -237,7 +237,7 @@ static void init_soft()
     }
 }
 
-//ili9341 init all
+//ili9341 init
 void ili9341_init()
 {
     init_gpio();
@@ -246,7 +246,7 @@ void ili9341_init()
     return;
 }
 
-//ili9341 flash color
+//ili9341 flash
 void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
 {
     //check

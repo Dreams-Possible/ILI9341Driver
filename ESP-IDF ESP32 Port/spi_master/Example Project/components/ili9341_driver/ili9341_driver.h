@@ -10,9 +10,9 @@
 #include"driver/spi_master.h"
 #include"freertos/FreeRTOS.h"
 
-//ili9341 init all
+//ili9341 init
 void ili9341_init();
-//ili9341 flash color
+//ili9341 flash
 void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
 
 #endif//#ifndef ILI9341_DRIVER_H

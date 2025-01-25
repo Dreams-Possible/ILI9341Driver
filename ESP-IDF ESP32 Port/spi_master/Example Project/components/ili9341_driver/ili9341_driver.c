@@ -77,9 +77,9 @@ static void init_gpio();
 static void init_spi();
 //init software
 static void init_soft();
-//ili9341 init all
+//ili9341 init
 void ili9341_init();
-//ili9341 flash color
+//ili9341 flash
 void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
 
 //io set
@@ -101,8 +101,8 @@ static void send_cmd(uint8_t cmd)
 {
     io(DC,0);
     spi_transaction_t trans={0};
-    trans.length=8,
-    trans.tx_buffer=&cmd,
+    trans.length=8;
+    trans.tx_buffer=&cmd;
     spi_device_transmit(static_data.device,&trans);
     return;
 }
@@ -112,8 +112,8 @@ static void send_data(uint8_t data)
 {
     io(DC,1);
     spi_transaction_t trans={0};
-    trans.length=8,
-    trans.tx_buffer=&data,
+    trans.length=8;
+    trans.tx_buffer=&data;
     spi_device_transmit(static_data.device,&trans);
     return;
 }
@@ -165,11 +165,11 @@ static void init_gpio()
     gpio_config(&config);
     #if RST!=-1
         //rst pin
-        config.intr_type=GPIO_INTR_DISABLE,
-        config.mode=GPIO_MODE_OUTPUT,
-        config.pin_bit_mask=(1ULL<<RST),
-        config.pull_down_en=0,
-        config.pull_up_en=0,
+        config.intr_type=GPIO_INTR_DISABLE;
+        config.mode=GPIO_MODE_OUTPUT;
+        config.pin_bit_mask=(1ULL<<RST);
+        config.pull_down_en=0;
+        config.pull_up_en=0;
         gpio_config(&config);
     #endif//#if RST!=-1
     #if LED!=-1
@@ -291,7 +291,7 @@ static void init_soft()
     }
 }
 
-//ili9341 init all
+//ili9341 init
 void ili9341_init()
 {
     init_gpio();
@@ -300,7 +300,7 @@ void ili9341_init()
     return;
 }
 
-//ili9341 flash color
+//ili9341 flash
 void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
 {
     //check
