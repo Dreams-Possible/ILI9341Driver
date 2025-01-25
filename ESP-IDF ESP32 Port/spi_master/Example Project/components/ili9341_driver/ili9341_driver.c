@@ -57,7 +57,7 @@
 //static data
 typedef struct static_data_t
 {
-    spi_device_handle_t device;
+    spi_device_handle_t spi;
 }static_data_t;
 static static_data_t static_data={0};
 
@@ -103,7 +103,7 @@ static void send_cmd(uint8_t cmd)
     spi_transaction_t trans={0};
     trans.length=8;
     trans.tx_buffer=&cmd;
-    spi_device_transmit(static_data.device,&trans);
+    spi_device_transmit(static_data.spi,&trans);
     return;
 }
 
@@ -114,7 +114,7 @@ static void send_data(uint8_t data)
     spi_transaction_t trans={0};
     trans.length=8;
     trans.tx_buffer=&data;
-    spi_device_transmit(static_data.device,&trans);
+    spi_device_transmit(static_data.spi,&trans);
     return;
 }
 
@@ -137,7 +137,7 @@ static void send_color(uint16_t*data,uint32_t length)
         {
             transaction.length=4096;
             transaction.tx_buffer=data;
-            spi_device_transmit(static_data.device,&transaction);
+            spi_device_transmit(static_data.spi,&transaction);
             data+=256;
             length-=256;
         }
@@ -145,7 +145,7 @@ static void send_color(uint16_t*data,uint32_t length)
         {
             transaction.length=length*16;
             transaction.tx_buffer=data;
-            spi_device_transmit(static_data.device,&transaction);
+            spi_device_transmit(static_data.spi,&transaction);
             length=0;
         }
     }
@@ -193,7 +193,7 @@ static void init_spi()
     config.spics_io_num=CS;
     config.queue_size=1;
     config.clock_speed_hz=RATE;
-    spi_bus_add_device(SPI,&config,&static_data.device);
+    spi_bus_add_device(SPI,&config,&static_data.spi);
 }
 
 //init software
