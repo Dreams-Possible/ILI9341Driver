@@ -126,25 +126,26 @@ static void send_color(uint16_t*data,uint32_t length)
     {
         return;
     }
+    uint16_t*data_t=malloc(length*sizeof(uint16_t));
     for(uint32_t f=0;f<length;++f)
     {
-        data[f]=SPI_SWAP_DATA_TX(data[f],16);
+        data_t[f]=SPI_SWAP_DATA_TX(data[f],16);
     }
     spi_transaction_t transaction={0};
-    while (length>0)
+    while(length>0)
     {
         if(length>=256)
         {
             transaction.length=256*16;
-            transaction.tx_buffer=data;
+            transaction.tx_buffer=data_t;
             transaction.rxlength=0;
             spi_device_transmit(static_data.spi,&transaction);
-            data+=256;
+            data_t+=256;
             length-=256;
         }else
         {
             transaction.length=length*16;
-            transaction.tx_buffer=data;
+            transaction.tx_buffer=data_t;
             transaction.rxlength=0;
             spi_device_transmit(static_data.spi,&transaction);
             length=0;
