@@ -135,8 +135,9 @@ static void send_color(uint16_t*data,uint32_t length)
     {
         if(length>=256)
         {
-            transaction.length=4096;
+            transaction.length=256*16;
             transaction.tx_buffer=data;
+            transaction.rxlength=0;
             spi_device_transmit(static_data.spi,&transaction);
             data+=256;
             length-=256;
@@ -144,6 +145,7 @@ static void send_color(uint16_t*data,uint32_t length)
         {
             transaction.length=length*16;
             transaction.tx_buffer=data;
+            transaction.rxlength=0;
             spi_device_transmit(static_data.spi,&transaction);
             length=0;
         }
