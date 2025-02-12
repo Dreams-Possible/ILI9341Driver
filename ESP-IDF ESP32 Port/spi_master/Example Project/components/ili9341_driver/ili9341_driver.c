@@ -126,10 +126,11 @@ static void send_color(uint16_t*data,uint32_t length)
     {
         return;
     }
-    uint16_t*data_t=malloc(length*sizeof(uint16_t));
+    uint16_t*data_ts=malloc(length*sizeof(uint16_t));
+    uint16_t*data_ts_bp=data_ts;
     for(uint32_t f=0;f<length;++f)
     {
-        data_t[f]=SPI_SWAP_DATA_TX(data[f],16);
+        data_ts[f]=SPI_SWAP_DATA_TX(data[f],16);
     }
     spi_transaction_t transaction={0};
     while(length>0)
@@ -137,20 +138,21 @@ static void send_color(uint16_t*data,uint32_t length)
         if(length>=256)
         {
             transaction.length=256*16;
-            transaction.tx_buffer=data_t;
+            transaction.tx_buffer=data_ts;
             transaction.rxlength=0;
             spi_device_transmit(static_data.spi,&transaction);
-            data_t+=256;
+            data_ts+=256;
             length-=256;
         }else
         {
             transaction.length=length*16;
-            transaction.tx_buffer=data_t;
+            transaction.tx_buffer=data_ts;
             transaction.rxlength=0;
             spi_device_transmit(static_data.spi,&transaction);
             length=0;
         }
     }
+    free(data_ts_bp);
 }
 
 //init gpio
