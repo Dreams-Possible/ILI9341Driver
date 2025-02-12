@@ -140,8 +140,7 @@ static void send_color(uint16_t*data,uint32_t length)
             spi_device_transmit(static_data.spi,&transaction);
             data+=256;
             length-=256;
-        }
-        else
+        }else
         {
             transaction.length=length*16;
             transaction.tx_buffer=data;
