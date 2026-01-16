@@ -1,46 +1,46 @@
 #include"ili9341_driver.h"
-//enable ili9341 driver
+//启用ILI9341驱动
 #ifdef ILI9341_DRIVER_H
 
-//config
+//配置定义
 #define DC 21
-#define RST 47//no use as -1
-#define LED 14//no use as -1
-#define HOR 240//horizontal pixel
-#define HOR_OFF 0//horizontal pixel offset
-#define VER 320//vertical pixel
-#define VER_OFF 0//vertical pixel offset
-#define DIR 0//rotation direction
-#define BRG 1//use bgr:0rgb,1bgr
-#define INV 0//use inv:0disable,1enable
+#define RST 47//设置为-1代表不使用
+#define LED 14//设置为-1代表不使用
+#define HOR 240//横向像素
+#define HOR_OFF 0//横向像素偏移
+#define VER 320//纵向像素
+#define VER_OFF 0//纵向像素偏移
+#define DIR 0//旋转方向
+#define BRG 1//是否使用BGR格式颜色
+#define INV 0//是否启用反色
 
-//example config for specific oem landscape screen
-// //config
+//某些厂商的横向屏幕配置示例
+// //配置定义
 // #define DC 21
-// #define RST 47//no use as -1
-// #define LED 14//no use as -1
-// #define HOR 320//horizontal pixel
-// #define HOR_OFF 0//horizontal pixel offset
-// #define VER 240//vertical pixel
-// #define VER_OFF 0//vertical pixel offset
-// #define DIR 0//rotation direction
-// #define BRG 1//use bgr:0rgb,1bgr
-// #define INV 0//use inv:0disable,1enable
+// #define RST 47//设置为-1代表不使用
+// #define LED 14//设置为-1代表不使用
+// #define HOR 320//横向像素
+// #define HOR_OFF 0//横向像素偏移
+// #define VER 240//纵向像素
+// #define VER_OFF 0//纵向像素偏移
+// #define DIR 0//旋转方向
+// #define BRG 1//是否使用BGR格式颜色
+// #define INV 0//是否启用反色
 
-//example config for specific oem vertical screen
-// //config
+//某些厂商的纵向屏幕配置示例
+// //配置定义
 // #define DC 21
-// #define RST 47//no use as -1
-// #define LED 14//no use as -1
-// #define HOR 240//horizontal pixel
-// #define HOR_OFF 0//horizontal pixel offset
-// #define VER 320//vertical pixel
-// #define VER_OFF 0//vertical pixel offset
-// #define DIR 2//rotation direction
-// #define BRG 1//use bgr:0rgb,1bgr
-// #define INV 0//use inv:0disable,1enable
+// #define RST 47//设置为-1代表不使用
+// #define LED 14//设置为-1代表不使用
+// #define HOR 240//横向像素
+// #define HOR_OFF 0//横向像素偏移
+// #define VER 320//纵向像素
+// #define VER_OFF 0//纵向像素偏移
+// #define DIR 2//旋转方向
+// #define BRG 1//是否使用BGR格式颜色
+// #define INV 0//是否启用反色
 
-//define
+//寄存器地址定义
 #define SWRESET 0x01
 #define SLPOUT 0x11
 #define INVON 0x21
@@ -51,57 +51,55 @@
 #define GMCTRP1 0xe0
 #define GMCTRN1 0xe1
 
-//io set
-static void io(uint16_t pin,uint8_t level);
-//delay ms
-static void delay(uint32_t ms);
-//send cmd
-static void send_cmd(uint8_t cmd);
-//send data
-static void send_data(uint8_t data);
-//send color
-static void send_color(uint16_t*data,uint32_t length);
-//init gpio
-static void init_gpio();
-//init spi
-static void init_spi();
-//init software
-static void init_soft();
-//ili9341 init
-void ili9341_init();
-//ili9341 flash
-void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
+//IO设置
+static uint8_t io(uint16_t pin,uint8_t level);
+//毫秒级延迟
+static uint8_t delay(uint32_t ms);
+//发送命令
+static uint8_t send_cmd(uint8_t cmd);
+//发送数据
+static uint8_t send_data(uint8_t data);
+//发送颜色数据
+static uint8_t send_color(uint16_t*data,uint32_t length);
+//用户初始化
+static uint8_t init_user();
+//软件初始化
+static uint8_t init_soft();
+//初始化ILI9341
+uint8_t ili9341_init();
+//刷新ILI9341
+uint8_t ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
 
-//io set
-static void io(uint16_t pin,uint8_t level)
+//IO设置
+static uint8_t io(uint16_t pin,uint8_t level)
 {
     return;
 }
 
-//delay ms
-static void delay(uint32_t ms)
+//毫秒级延迟
+static uint8_t delay(uint32_t ms)
 {
     return;
 }
 
-//send cmd
-static void send_cmd(uint8_t cmd)
+//发送命令
+static uint8_t send_cmd(uint8_t cmd)
 {
     io(DC,0);
     //spi_send(cmd);
     return;
 }
 
-//send data
-static void send_data(uint8_t data)
+//发送数据
+static uint8_t send_data(uint8_t data)
 {
     io(DC,1);
     //spi_send(data);
     return;
 }
 
-//send color
-static void send_color(uint16_t*data,uint32_t length)
+//发送颜色数据
+static uint8_t send_color(uint16_t*data,uint32_t length)
 {
     io(DC,1);
     if(data==NULL||length==0)
@@ -118,39 +116,22 @@ static void send_color(uint16_t*data,uint32_t length)
     return;
 }
 
-//init gpio
-static void init_gpio()
-{
-    //dc pin
-    //dc_init();
-    if(RST!=-1)
-    {
-        //rst pin
-        //rst_init();
-    }
-    if(LED!=-1)
-    {
-        //led pin
-        //led_init();
-    }
-    return;
-}
-
-//init spi
-static void init_spi()
+//用户初始化
+static uint8_t init_user()
 {
     //spi_init();
+    //gpio_init();
 }
 
-//init software
-static void init_soft()
+//软件初始化
+static uint8_t init_soft()
 {
-    //disable backlight
+    //关闭背光
     if(LED!=-1)
     {
         io(LED,0);
     }
-    //hardware reset
+    //硬件复位
     if(RST!=-1)
     {
         io(RST,1);
@@ -158,7 +139,7 @@ static void init_soft()
         io(RST,1);
         delay(200);
     }
-    //send init code
+    //发送初始化代码
     send_cmd(SWRESET);
     delay(200);
     send_cmd(SLPOUT);
@@ -230,26 +211,26 @@ static void init_soft()
     send_data(0x0F);
     send_cmd(DISPON);
     delay(200);
-    //enable backlight
+    //启用背光
     if(LED!=-1)
     {
         io(LED,1);
     }
 }
 
-//ili9341 init
-void ili9341_init()
+//初始化ILI9341
+uint8_t ili9341_init()
 {
     init_gpio();
-    init_spi();
+    init_user();
     init_soft();
     return;
 }
 
-//ili9341 flash
-void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
+//刷新ILI9341
+uint8_t ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
 {
-    //check
+    //检查参数
     if(x2<x1||y2<y1||color==NULL)
     {
         return;
@@ -270,9 +251,9 @@ void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
     {
         return;
     }
-    //flash
+    //刷新
     uint8_t data=0;
-    //x
+    //X轴坐标
     send_cmd(0x2a);
     data=(uint8_t)(((uint16_t)x1+HOR_OFF)>>8);
     send_data(data);
@@ -282,7 +263,7 @@ void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
     send_data(data);
     data=(uint8_t)((uint16_t)x2+HOR_OFF);
     send_data(data);
-    //y
+    //Y轴坐标
     send_cmd(0x2b);
     data=(uint8_t)(((uint16_t)y1+VER_OFF)>>8);
     send_data(data);
@@ -292,7 +273,7 @@ void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
     send_data(data);
     data=(uint8_t)((uint16_t)y2+VER_OFF);
     send_data(data);
-    //color
+    //发送颜色
     send_cmd(0x2c);
     uint32_t length=(x2-x1+1)*(y2-y1+1);
     send_color(color,length);
