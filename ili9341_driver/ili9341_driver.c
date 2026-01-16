@@ -1,6 +1,7 @@
 #include"ili9341_driver.h"
 //启用ILI9341驱动
 #ifdef ILI9341_DRIVER_H
+#include<stddef.h>
 
 //配置定义
 #define DC 21
@@ -52,38 +53,40 @@
 #define GMCTRN1 0xe1
 
 //IO设置
-static uint8_t io(uint16_t pin,uint8_t level);
+static void io(uint16_t pin,uint8_t level);
 //毫秒级延迟
-static uint8_t delay(uint32_t ms);
+static void delay(uint32_t ms);
 //发送命令
-static uint8_t send_cmd(uint8_t cmd);
+static void send_cmd(uint8_t cmd);
 //发送数据
-static uint8_t send_data(uint8_t data);
+static void send_data(uint8_t data);
 //发送颜色数据
-static uint8_t send_color(uint16_t*data,uint32_t length);
+static void send_color(uint16_t*data,uint32_t length);
 //用户初始化
 static uint8_t init_user();
 //软件初始化
-static uint8_t init_soft();
+static void init_soft();
 //初始化ILI9341
 uint8_t ili9341_init();
 //刷新ILI9341
-uint8_t ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
+void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color);
 
 //IO设置
-static uint8_t io(uint16_t pin,uint8_t level)
+static void io(uint16_t pin,uint8_t level)
 {
+    //gpio_set(pin,level);
     return;
 }
 
 //毫秒级延迟
-static uint8_t delay(uint32_t ms)
+static void delay(uint32_t ms)
 {
+    //osdelay(ms);
     return;
 }
 
 //发送命令
-static uint8_t send_cmd(uint8_t cmd)
+static void send_cmd(uint8_t cmd)
 {
     io(DC,0);
     //spi_send(cmd);
@@ -91,7 +94,7 @@ static uint8_t send_cmd(uint8_t cmd)
 }
 
 //发送数据
-static uint8_t send_data(uint8_t data)
+static void send_data(uint8_t data)
 {
     io(DC,1);
     //spi_send(data);
@@ -99,7 +102,7 @@ static uint8_t send_data(uint8_t data)
 }
 
 //发送颜色数据
-static uint8_t send_color(uint16_t*data,uint32_t length)
+static void send_color(uint16_t*data,uint32_t length)
 {
     io(DC,1);
     if(data==NULL||length==0)
@@ -121,10 +124,11 @@ static uint8_t init_user()
 {
     //spi_init();
     //gpio_init();
+    return 0;
 }
 
 //软件初始化
-static uint8_t init_soft()
+static void init_soft()
 {
     //关闭背光
     if(LED!=-1)
@@ -216,19 +220,22 @@ static uint8_t init_soft()
     {
         io(LED,1);
     }
+    return;
 }
 
 //初始化ILI9341
 uint8_t ili9341_init()
 {
-    init_gpio();
-    init_user();
+    if(init_user())
+    {
+        return 1;
+    }
     init_soft();
-    return;
+    return 0;
 }
 
 //刷新ILI9341
-uint8_t ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
+void ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color)
 {
     //检查参数
     if(x2<x1||y2<y1||color==NULL)
@@ -277,6 +284,7 @@ uint8_t ili9341_flash(int16_t x1,int16_t y1,int16_t x2,int16_t y2,uint16_t*color
     send_cmd(0x2c);
     uint32_t length=(x2-x1+1)*(y2-y1+1);
     send_color(color,length);
+    return;
 }
 
 #endif//#ifdef ILI9341_DRIVER_H
